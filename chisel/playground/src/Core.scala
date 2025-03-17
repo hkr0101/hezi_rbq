@@ -31,4 +31,5 @@ class Core extends Module {
   fetchUnit.decodeStage <> decodeStage.fetchUnit
 
   // TODO: 完成Core模块的逻辑
+  
 }

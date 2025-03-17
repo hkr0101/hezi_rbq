@@ -32,10 +32,15 @@ class ARegFile extends Module {
   val regs = RegInit(VecInit(Seq.fill(AREG_NUM)(0.U(XLEN.W))))
 
   // 写寄存器堆
+  when(io.write.wen === 1.U&&io.write.waddr =/= 0.U){
+    regs(io.write.waddr) := io.write.wdata
+  }
   // TODO:完成写寄存器堆逻辑
   // 注意：0号寄存器恒为0
 
   // 读寄存器堆
+  io.read.src1.rdata := Mux(io.read.src1.raddr === 0.U, 0.U, regs(io.read.src1.raddr))
+  io.read.src2.rdata := Mux(io.read.src2.raddr === 0.U, 0.U, regs(io.read.src2.raddr))
   // TODO:完成读寄存器堆逻辑
   // 注意：0号寄存器恒为0
 }

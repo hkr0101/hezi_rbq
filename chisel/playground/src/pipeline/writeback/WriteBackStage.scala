@@ -24,4 +24,13 @@ class WriteBackStage extends Module {
   val data = RegInit(0.U.asTypeOf(new MemWbData()))
   
   // TODO: 完成WriteBackStage模块的逻辑
+  io.writeBackUnit.data := io.memoryUnit.data
+  switch(io.memoryUnit.data.info.op){
+    is(ALUOpType.add , ALUOpType.sub , ALUOpType.sll , ALUOpType.slt ,
+    ALUOpType.sltu , ALUOpType.xor , ALUOpType.srl , ALUOpType.sra ,
+    ALUOpType.or , ALUOpType.and , ALUOpType.addw , ALUOpType.subw ,
+    ALUOpType.sllw , ALUOpType.srlw , ALUOpType.sraw){
+      io.writeBackUnit.data := io.memoryUnit.data
+    }
+  }
 }

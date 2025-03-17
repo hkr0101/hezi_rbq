@@ -14,4 +14,11 @@ class WriteBackUnit extends Module {
   })
 
   // TODO: 完成WriteBackUnit模块的逻辑
+  io.regfile.wdata := io.writeBackStage.data.rd_info.wdata
+  io.regfile.wen := io.writeBackStage.data.info.reg_wen
+  io.regfile.waddr := io.writeBackStage.data.info.reg_waddr
+  io.debug.pc := io.writeBackStage.data.pc
+  io.debug.commit := io.writeBackStage.data.info.reg_wen
+  io.debug.rf_wdata := io.writeBackStage.data.rd_info.wdata
+  io.debug.rf_wnum := io.writeBackStage.data.info.reg_waddr
 }
