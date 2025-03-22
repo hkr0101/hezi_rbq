@@ -29,7 +29,7 @@ class ARegFile extends Module {
   })
 
   // 定义32个32位寄存器
-  val regs = RegInit(VecInit(Seq.fill(AREG_NUM)(0.U(XLEN.W))))
+  val regs = RegInit(VecInit((0 until AREG_NUM).map(_.U(XLEN.W))))
 
   // 写寄存器堆
   when(io.write.wen === 1.U&&io.write.waddr =/= 0.U){
@@ -39,8 +39,9 @@ class ARegFile extends Module {
   // 注意：0号寄存器恒为0
 
   // 读寄存器堆
-  io.read.src1.rdata := Mux(io.read.src1.raddr === 0.U, 0.U, regs(io.read.src1.raddr))
-  io.read.src2.rdata := Mux(io.read.src2.raddr === 0.U, 0.U, regs(io.read.src2.raddr))
+  io.read.src1.rdata := regs(io.read.src1.raddr)
+  io.read.src2.rdata := regs(io.read.src2.raddr)
   // TODO:完成读寄存器堆逻辑
   // 注意：0号寄存器恒为0
+  //printf("x3:%x x17:%x x10:%x\n",regs(3),regs(17),regs(10))
 }

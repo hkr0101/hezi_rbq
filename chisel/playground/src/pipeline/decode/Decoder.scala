@@ -23,12 +23,10 @@ class Decoder extends Module with HasInstrType {
   val rs1    = io.in.inst(19, 15)
   val rs2    = io.in.inst(24, 20)
   val rd     = io.in.inst(11, 7)
-  io.out.info.valid := true.B
   io.out.info.src1_raddr := rs1
   io.out.info.src2_raddr := rs2
   val instrType = Wire(UInt(3.W))
   instrType := InstrN 
-
   switch(opcode) {
     is("b0110011".U) {
       instrType := InstrR
@@ -36,80 +34,67 @@ class Decoder extends Module with HasInstrType {
     is("b0111011".U) {
       instrType := InstrR
     }
-    
+    is("b0010011".U) {
+    instrType := InstrI
+    }
+    is("b0011011".U) {
+      instrType := InstrI
+    }
+    is("b0000011".U) {
+      instrType := InstrI
+    }
+    is("b0100011".U) {
+      instrType := InstrS
+    }
+    is("b1100011".U) {
+      instrType := InstrB
+    }
+    is("b1101111".U) {
+      instrType := InstrJ
+    }
+    is("b1100111".U) {
+      instrType := InstrI
+    }
+    is("b0010111".U) {
+      instrType := InstrU
+    }
+    is("b0110111".U) {
+      instrType := InstrU
+    }
+    is("b0001111".U) {
+      instrType := InstrI
+    }
+    is("b1110011".U) {
+      when (funct3 =/= 0.U) {
+        instrType := InstrI
+      }.otherwise {
+        instrType := InstrS
+      }
+    }
   }
+  io.out.info.valid := (instrType =/= InstrN)
   io.out.info.reg_wen   := isRegWen(instrType)
   io.out.info.reg_waddr := Mux((instrType === InstrS) || (instrType === InstrB), 0.U, rd)
   io.out.info.op := ALUOpType.add
+  //printf("op::%x %x\n",ALUOpType.add,io.out.info.op)
+  def isWOpcode(opcode: UInt): Bool = opcode === "b0111011".U
   switch(opcode) {
-    is("b0110011".U) {
-      switch(funct3) {
-        is("b000".U) {
-          switch(funct7) {
-            is("b0000000".U) {
-              io.out.info.op := ALUOpType.add
-            }
-            is("b0100000".U) {
-              io.out.info.op := ALUOpType.sub
-            }
-          }
-        }
-        is("b001".U) {
-          io.out.info.op := ALUOpType.sll
-        }
-        is("b010".U) {
-          io.out.info.op := ALUOpType.slt
-        }
-        is("b011".U) {
-          io.out.info.op := ALUOpType.sltu
-        }
-        is("b100".U){
-          io.out.info.op := ALUOpType.xor
-        }
-        is("b101".U){
-          switch(funct7) {
-            is("b0000000".U) {
-              io.out.info.op := ALUOpType.srl
-            }
-            is("b0100000".U) {
-              io.out.info.op := ALUOpType.sra
-            }
-          }
-        }
-        is("b110".U){
-          io.out.info.op := ALUOpType.or
-        }
-        is("b111".U){
-          io.out.info.op := ALUOpType.and
-        }
-      }
-    }
-    is("b0111011".U) {
-      switch(funct3){
-        is("b000".U){
-          switch(funct7) {
-            is("b0000000".U) {
-              io.out.info.op := ALUOpType.addw
-            }
-            is("b0100000".U) {
-              io.out.info.op := ALUOpType.subw
-            }
-          }
-        }
-        is("b001".U){
-          io.out.info.op := ALUOpType.sllw
-        }
-        is("b101".U){
-          switch(funct7) {
-            is("b0000000".U) {
-              io.out.info.op := ALUOpType.srlw
-            }
-            is("b0100000".U) {
-              io.out.info.op := ALUOpType.sraw
-            }
-          }
-        }
-      }
+  is("b0110011".U, "b0111011".U) { 
+    val isW = isWOpcode(opcode)
+    val combined = Cat(funct7(5), funct3)
+    switch(combined) {
+      is("b0_000".U)   {io.out.info.op := Mux(isW, ALUOpType.addw, ALUOpType.add)}
+      is("b1_000".U)   {io.out.info.op := Mux(isW, ALUOpType.subw, ALUOpType.sub)}
+      is("b0_001".U , "b1_001".U)   {io.out.info.op := Mux(isW, ALUOpType.sllw, ALUOpType.sll)}
+      is("b0_010".U , "b1_010".U)   {io.out.info.op := ALUOpType.slt}
+      is("b0_011".U , "b1_011".U)   {io.out.info.op := ALUOpType.sltu}
+      is("b0_100".U , "b1_100".U)   {io.out.info.op := ALUOpType.xor}
+      is("b0_110".U , "b1_110".U)   {io.out.info.op := ALUOpType.or}
+      is("b0_111".U , "b1_111".U)   {io.out.info.op := ALUOpType.and}
+      is("b0_101".U)   {io.out.info.op := Mux(isW, ALUOpType.srlw, ALUOpType.srl)}
+      is("b1_101".U)   {io.out.info.op := Mux(isW, ALUOpType.sraw, ALUOpType.sra)}
     }
   }
+}
+
 }
