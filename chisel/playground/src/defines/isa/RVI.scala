@@ -30,8 +30,11 @@ object RV32I_ALUInstr extends HasInstrType with CoreParameter {
 
   def AUIPC = BitPat("b????????????????????_?????_0010111")
   def LUI   = BitPat("b????????????????????_?????_0110111")
+  def ECALL = BitPat("b00000000000000000000_00000_1110011")
+
 
   val table = Array(
+    
     ADDI  -> List(InstrI, FuType.alu, ALUOpType.add),
     // TODO: 完成其他指令的解析
     SLLI  -> List(InstrI, FuType.alu, ALUOpType.sll),
@@ -54,8 +57,9 @@ object RV32I_ALUInstr extends HasInstrType with CoreParameter {
     SUB   -> List(InstrR, FuType.alu, ALUOpType.sub),
     SRA   -> List(InstrR, FuType.alu, ALUOpType.sra),
     
-    AUIPC -> List(InstrU, FuType.alu, ALUOpType.add),
-    //LUI   -> List(InstrU, FuType.alu, ALUOpType.lui)
+    AUIPC -> List(InstrU, FuType.alu, ALUOpType.auipc),
+    LUI   -> List(InstrU, FuType.alu, ALUOpType.lui),
+    ECALL -> List(InstrSys, FuType.csr, ALUOpType.ecall)
   )
 }
 

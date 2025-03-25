@@ -4,21 +4,22 @@ import chisel3._
 import chisel3.util._
 
 trait HasInstrType {
-  def InstrN = "b000".U
-  def InstrI = "b100".U
-  def InstrR = "b101".U
-  def InstrS = "b010".U
-  def InstrB = "b001".U
-  def InstrU = "b110".U
-  def InstrJ = "b111".U
-
-  def isRegWen(instrType: UInt): Bool = instrType(2)
+  def InstrN = 0.U
+  def InstrI = 1.U
+  def InstrR = 2.U
+  def InstrS = 3.U
+  def InstrB = 4.U
+  def InstrU = 5.U
+  def InstrJ = 6.U
+  def InstrSys = 7.U
+  def isRegWen(instrType: UInt): Bool = instrType(3)
 }
 
 object FuType {
   def num     = 1
   def alu     = 0.U // arithmetic logic unit
-  def apply() = UInt(log2Up(num).W)
+  def csr     = 2.U
+  def apply() = UInt(2.W)
 }
 
 object FuOpType {
@@ -27,21 +28,24 @@ object FuOpType {
 
 // ALU
 object ALUOpType {
-  def add  = "b00000".U
-  def sub  = "b01000".U
-  def sll  = "b00001".U
-  def slt  = "b00010".U
-  def sltu = "b00011".U
-  def xor  = "b00100".U
-  def srl  = "b00101".U
-  def sra  = "b01101".U
-  def or   = "b00110".U
-  def and  = "b00111".U
-  def addw = "b10000".U
-  def subw = "b11000".U
-  def sllw = "b10001".U
-  def srlw = "b10101".U
-  def sraw = "b11101".U
-  def isWordOp(func: UInt) = func(4)
+  def add  = 0.U//0
+  def sub  = 1.U//8
+  def sll  = 2.U//1
+  def slt  = 3.U//2
+  def sltu = 4.U//3
+  def xor  = 5.U//4
+  def srl  = 6.U//5
+  def sra  = 7.U//13
+  def or   = 8.U//6
+  def and  = 9.U//7
+  def addw = 10.U//16
+  def subw = 11.U//24
+  def sllw = 12.U//17
+  def srlw = 13.U//21
+  def sraw = 14.U//29
+  def ecall = 15.U
+  def auipc =16.U
+  def lui =17.U
+  def isWordOp(func: UInt) = func(5)
   // TODO: 定义更多的ALU操作类型
 }

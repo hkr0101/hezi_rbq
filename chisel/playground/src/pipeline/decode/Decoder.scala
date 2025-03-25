@@ -8,93 +8,54 @@ import cpu.defines.Const._
 class Decoder extends Module with HasInstrType {
   val io = IO(new Bundle {
     // inputs
-    val in = Input(new Bundle {
-      val inst = UInt(XLEN.W)
-    })
+    val in = Input(new Bundle {val inst = UInt(XLEN.W)})
     // outputs
-    val out = Output(new Bundle {
-      val info = new Info()
-    })
+    val out = Output(new Bundle {val info = new Info()})
   })
-  // TODO: 完成Decoder模块的逻辑
-  val opcode = io.in.inst(6, 0)
-  val funct3 = io.in.inst(14, 12)
-  val funct7 = io.in.inst(31, 25)
-  val rs1    = io.in.inst(19, 15)
-  val rs2    = io.in.inst(24, 20)
-  val rd     = io.in.inst(11, 7)
-  io.out.info.src1_raddr := rs1
-  io.out.info.src2_raddr := rs2
-  val instrType = Wire(UInt(3.W))
-  instrType := InstrN 
-  switch(opcode) {
-    is("b0110011".U) {
-      instrType := InstrR
-    }
-    is("b0111011".U) {
-      instrType := InstrR
-    }
-    is("b0010011".U) {
-    instrType := InstrI
-    }
-    is("b0011011".U) {
-      instrType := InstrI
-    }
-    is("b0000011".U) {
-      instrType := InstrI
-    }
-    is("b0100011".U) {
-      instrType := InstrS
-    }
-    is("b1100011".U) {
-      instrType := InstrB
-    }
-    is("b1101111".U) {
-      instrType := InstrJ
-    }
-    is("b1100111".U) {
-      instrType := InstrI
-    }
-    is("b0010111".U) {
-      instrType := InstrU
-    }
-    is("b0110111".U) {
-      instrType := InstrU
-    }
-    is("b0001111".U) {
-      instrType := InstrI
-    }
-    is("b1110011".U) {
-      when (funct3 =/= 0.U) {
-        instrType := InstrI
-      }.otherwise {
-        instrType := InstrS
-      }
+// TODO: 完成Decoder模块的逻辑
+
+//------------------------------------info初始化------------------------------------
+  io.out.info := {
+    val default = Wire(new Info())
+    default.valid       := false.B 
+    default.instrType   := InstrN
+    default.op          := ALUOpType.add
+    default.reg_wen     := false.B
+    default.reg_waddr   := 0.U
+    default.src1_raddr  := 0.U
+    default.src2_raddr  := 0.U
+    default.imm         := 0.U
+    default.src1_ren    := false.B
+    default.src2_ren    := false.B
+    default
+  }
+//---------------------------------------------------------------------------------
+  Instructions.DecodeTable.foreach { 
+  case (bitPat, ctrl) => 
+    when (bitPat === io.in.inst) {
+      io.out.info.valid     := true.B
+      io.out.info.instrType := ctrl(0).asUInt
+      io.out.info.op        := ctrl(2)
+      io.out.info.reg_wen   := (ctrl(0) =/= InstrS) && (ctrl(0) =/= InstrB)
+      io.out.info.reg_waddr := io.in.inst(11,7)
+      io.out.info.src1_raddr := Mux(ctrl(0) === InstrU, 0.U, io.in.inst(19,15))
+      io.out.info.src2_raddr := Mux(ctrl(0) === InstrI, 0.U, io.in.inst(24,20))
+      io.out.info.imm := generateImm(ctrl(0), io.in.inst)
+      io.out.info.src1_ren    := Mux(ctrl(0) === InstrU, 0.U, 1.U)
+      io.out.info.src2_ren    := Mux(ctrl(0) === InstrI, 0.U, 1.U)
     }
   }
-  io.out.info.valid := (instrType =/= InstrN)
-  io.out.info.reg_wen   := isRegWen(instrType)
-  io.out.info.reg_waddr := Mux((instrType === InstrS) || (instrType === InstrB), 0.U, rd)
-  io.out.info.op := ALUOpType.add
-  //printf("op::%x %x\n",ALUOpType.add,io.out.info.op)
-  def isWOpcode(opcode: UInt): Bool = opcode === "b0111011".U
-  switch(opcode) {
-  is("b0110011".U, "b0111011".U) { 
-    val isW = isWOpcode(opcode)
-    val combined = Cat(funct7(5), funct3)
-    switch(combined) {
-      is("b0_000".U)   {io.out.info.op := Mux(isW, ALUOpType.addw, ALUOpType.add)}
-      is("b1_000".U)   {io.out.info.op := Mux(isW, ALUOpType.subw, ALUOpType.sub)}
-      is("b0_001".U , "b1_001".U)   {io.out.info.op := Mux(isW, ALUOpType.sllw, ALUOpType.sll)}
-      is("b0_010".U , "b1_010".U)   {io.out.info.op := ALUOpType.slt}
-      is("b0_011".U , "b1_011".U)   {io.out.info.op := ALUOpType.sltu}
-      is("b0_100".U , "b1_100".U)   {io.out.info.op := ALUOpType.xor}
-      is("b0_110".U , "b1_110".U)   {io.out.info.op := ALUOpType.or}
-      is("b0_111".U , "b1_111".U)   {io.out.info.op := ALUOpType.and}
-      is("b0_101".U)   {io.out.info.op := Mux(isW, ALUOpType.srlw, ALUOpType.srl)}
-      is("b1_101".U)   {io.out.info.op := Mux(isW, ALUOpType.sraw, ALUOpType.sra)}
+  private def generateImm(instrType: UInt, inst: UInt): UInt = {
+    val imm = Wire(UInt(XLEN.W))
+    imm := "h0".U
+    switch(instrType) {
+      is(InstrI) { imm := Cat(Fill(XLEN-12, inst(31)), inst(31,20)) }
+      is(InstrU) { imm := Cat(Fill(XLEN-20, inst(31)), inst(31,12)) }
+      // is(InstrS) { imm := Cat(Fill(XLEN-12, inst(31)), inst(31,25), inst(11,7)) }
+      // is(InstrB) { imm := Cat(Fill(XLEN-13, inst(31)), inst(7), inst(30,25), inst(11,8), 0.U(1.W)) }
     }
+    imm
   }
-}
+
 
 }

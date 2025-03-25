@@ -24,15 +24,26 @@ class DecodeUnit extends Module {
   info.valid := io.decodeStage.data.valid
 
   // TODO:完成寄存器堆的读取
-  io.regfile.src1.raddr := io.decodeStage.data.inst(19,15)
-  io.regfile.src2.raddr := io.decodeStage.data.inst(24,20) 
+  io.regfile.src1.raddr := decoder.out.info.src1_raddr
+  io.regfile.src2.raddr := decoder.out.info.src2_raddr
 
+  
   // TODO: 完成DecodeUnit模块的逻辑
   io.executeStage.data.pc                 := pc
   io.executeStage.data.info               := info
   io.executeStage.data.src_info.src1_data := io.regfile.src1.rdata
   io.executeStage.data.src_info.src2_data := io.regfile.src2.rdata
-
+//decoder.out.info.src1_ren
+  when(decoder.out.info.src1_ren === 0.U && decoder.out.info.src2_ren === 0.U){
+    io.executeStage.data.src_info.src1_data := decoder.out.info.imm
+    io.executeStage.data.src_info.src2_data := 0.U
+  }.elsewhen(decoder.out.info.src1_ren === 1.U && decoder.out.info.src2_ren === 0.U){
+    io.executeStage.data.src_info.src1_data := io.regfile.src1.rdata
+    io.executeStage.data.src_info.src2_data := decoder.out.info.imm
+  }.elsewhen(decoder.out.info.src1_ren === 1.U && decoder.out.info.src2_ren === 1.U){
+    io.executeStage.data.src_info.src1_data := io.regfile.src1.rdata
+    io.executeStage.data.src_info.src2_data := io.regfile.src2.rdata
+  }
   //printf("pc:%x 1:%x 2:%x \n",pc,io.regfile.src1.rdata,io.regfile.src2.rdata)
 
 }

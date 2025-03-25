@@ -27,6 +27,7 @@ class Fu extends Module {
 
   alu.info     := io.data.info
   alu.src_info := io.data.src_info
+  alu.pc       := io.data.pc
 
   io.data.rd_info.wdata := alu.result
 }

@@ -31,7 +31,7 @@ class MemoryStage extends Module {
     is(ALUOpType.add , ALUOpType.sub , ALUOpType.sll , ALUOpType.slt ,
     ALUOpType.sltu , ALUOpType.xor , ALUOpType.srl , ALUOpType.sra ,
     ALUOpType.or , ALUOpType.and , ALUOpType.addw , ALUOpType.subw ,
-    ALUOpType.sllw , ALUOpType.srlw , ALUOpType.sraw){
+    ALUOpType.sllw , ALUOpType.srlw , ALUOpType.sraw, ALUOpType.auipc, ALUOpType.lui){
       data := io.executeUnit.data
       
       //printf("testest\n")

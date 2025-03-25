@@ -21,8 +21,7 @@ class WriteBackUnit extends Module {
   io.debug.commit := io.writeBackStage.data.info.reg_wen & io.writeBackStage.data.info.valid
   io.debug.rf_wdata := io.writeBackStage.data.rd_info.wdata
   io.debug.rf_wnum := io.writeBackStage.data.info.reg_waddr
-  //io.debug.commit := "b1".U
-  when(io.debug.pc === "h8001b284".U){
+  when(io.writeBackStage.data.info.op === ALUOpType.ecall){
     io.debug.commit := "b1".U
   }
 }
