@@ -43,5 +43,5 @@ class ARegFile extends Module {
   io.read.src2.rdata := regs(io.read.src2.raddr)
   // TODO:完成读寄存器堆逻辑
   // 注意：0号寄存器恒为0
-  printf("decode  : x3:%x x15:%x x5:%x\n",regs(3),regs(15),regs(5))
+  //printf("decode  : x3:%x x15:%x x5:%x\n",regs(3),regs(15),regs(5))
 }
