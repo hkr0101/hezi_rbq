@@ -32,9 +32,17 @@ object RV32I_ALUInstr extends HasInstrType with CoreParameter {
   def LUI   = BitPat("b????????????????????_?????_0110111")
   def ECALL = BitPat("b00000000000000000000_00000_1110011")
 
+  def MUL   = BitPat("b0000001_?????_?????_000_?????_0110011")
+  def MULH  = BitPat("b0000001_?????_?????_001_?????_0110011")
+  def MULHSU= BitPat("b0000001_?????_?????_010_?????_0110011")
+  def MULHU = BitPat("b0000001_?????_?????_011_?????_0110011")
+  def DIV   = BitPat("b0000001_?????_?????_100_?????_0110011")
+  def DIVU  = BitPat("b0000001_?????_?????_101_?????_0110011")
+  def REM   = BitPat("b0000001_?????_?????_110_?????_0110011")
+  def REMU  = BitPat("b0000001_?????_?????_111_?????_0110011")
 
   val table = Array(
-    
+
     ADDI  -> List(InstrI, FuType.alu, ALUOpType.add),
     // TODO: 完成其他指令的解析
     SLLI  -> List(InstrI, FuType.alu, ALUOpType.sll),
@@ -59,7 +67,16 @@ object RV32I_ALUInstr extends HasInstrType with CoreParameter {
     
     AUIPC -> List(InstrU, FuType.alu, ALUOpType.auipc),
     LUI   -> List(InstrU, FuType.alu, ALUOpType.lui),
-    ECALL -> List(InstrSys, FuType.csr, ALUOpType.ecall)
+    ECALL -> List(InstrSys, FuType.csr, ALUOpType.ecall),
+
+    MUL   -> List(InstrR, FuType.mdu, MDUOpType.mul),
+    MULH  -> List(InstrR, FuType.mdu, MDUOpType.mulh),
+    MULHSU-> List(InstrR, FuType.mdu, MDUOpType.mulhsu),
+    MULHU -> List(InstrR, FuType.mdu, MDUOpType.mulhu),
+    DIV   -> List(InstrR, FuType.mdu, MDUOpType.div),
+    DIVU  -> List(InstrR, FuType.mdu, MDUOpType.divu),
+    REM   -> List(InstrR, FuType.mdu, MDUOpType.rem),
+    REMU  -> List(InstrR, FuType.mdu, MDUOpType.remu)
   )
 }
 
@@ -74,6 +91,12 @@ object RV64IInstr extends HasInstrType {
   def ADDW  = BitPat("b0000000_?????_?????_000_?????_0111011")
   def SUBW  = BitPat("b0100000_?????_?????_000_?????_0111011")
 
+  def MULW  = BitPat("b0000001_?????_?????_000_?????_0111011")
+  def DIVW  = BitPat("b0000001_?????_?????_100_?????_0111011")
+  def DIVUW = BitPat("b0000001_?????_?????_101_?????_0111011")
+  def REMW  = BitPat("b0000001_?????_?????_110_?????_0111011")
+  def REMUW = BitPat("b0000001_?????_?????_111_?????_0111011")
+
   val table = Array(
     // TODO: 完成RV64I指令集的解析
     ADDIW -> List(InstrI, FuType.alu, ALUOpType.addw),
@@ -85,7 +108,13 @@ object RV64IInstr extends HasInstrType {
     SUBW  -> List(InstrR, FuType.alu, ALUOpType.subw),
     SLLW  -> List(InstrR, FuType.alu, ALUOpType.sllw),
     SRLW  -> List(InstrR, FuType.alu, ALUOpType.srlw),
-    SRAW  -> List(InstrR, FuType.alu, ALUOpType.sraw)
+    SRAW  -> List(InstrR, FuType.alu, ALUOpType.sraw),
+
+    MULW  -> List(InstrR, FuType.mdu, MDUOpType.mulw),
+    DIVW  -> List(InstrR, FuType.mdu, MDUOpType.divw),
+    DIVUW -> List(InstrR, FuType.mdu, MDUOpType.divuw),
+    REMW  -> List(InstrR, FuType.mdu, MDUOpType.remw),
+    REMUW -> List(InstrR, FuType.mdu, MDUOpType.remuw)
   )
 }
 

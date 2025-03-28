@@ -12,18 +12,19 @@ trait HasInstrType {
   def InstrU = 5.U
   def InstrJ = 6.U
   def InstrSys = 7.U
-  def isRegWen(instrType: UInt): Bool = instrType(3)
+  def isRegWen(instrType: UInt): Bool = instrType(8)
 }
 
 object FuType {
   def num     = 1
   def alu     = 0.U // arithmetic logic unit
   def csr     = 2.U
-  def apply() = UInt(2.W)
+  def mdu     = 3.U
+  def apply() = UInt(8.W)
 }
 
 object FuOpType {
-  def apply() = UInt(5.W)
+  def apply() = UInt(8.W)
 }
 
 // ALU
@@ -46,6 +47,25 @@ object ALUOpType {
   def ecall = 15.U
   def auipc =16.U
   def lui =17.U
-  def isWordOp(func: UInt) = func(5)
+  def isWordOp(func: UInt) = func(8)
   // TODO: 定义更多的ALU操作类型
+}
+
+object MDUOpType{
+  def mul = 0.U
+  def mulh = 1.U
+  def mulhsu = 2.U
+  def mulhu = 3.U
+  def div = 4.U
+  def divu = 5.U
+  def rem = 6.U
+  def remu = 7.U
+  def mulw = 8.U
+  def divw = 9.U
+  def divuw = 10.U
+  def remw = 11.U
+  def remuw =12.U
+  // def isDiv(op:     Uint) = op(2)
+  // def isDivSign(op: Uint) = isDiv(op) && !op(0)
+  // def isWordOp(op:  Uint) = op(3)
 }

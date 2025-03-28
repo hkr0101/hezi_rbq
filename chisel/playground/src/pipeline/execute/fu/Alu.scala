@@ -54,8 +54,6 @@ class Alu extends Module {
       ans := Cat(Fill(32,result32(31)),result32)
     }
     is(ALUOpType.auipc){
-      // val result32 = (io.pc + imm_u)(31, 0)
-      // ans := Cat(Fill(32,result32(31)),result32)
       ans := (io.pc + imm_u)(31, 0)
     }
     is(ALUOpType.lui){

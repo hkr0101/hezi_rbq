@@ -33,7 +33,7 @@ class DecodeUnit extends Module {
   io.executeStage.data.info               := info
   io.executeStage.data.src_info.src1_data := io.regfile.src1.rdata
   io.executeStage.data.src_info.src2_data := io.regfile.src2.rdata
-//decoder.out.info.src1_ren
+  //访问寄存器
   when(decoder.out.info.src1_ren === 0.U && decoder.out.info.src2_ren === 0.U){
     io.executeStage.data.src_info.src1_data := decoder.out.info.imm
     io.executeStage.data.src_info.src2_data := 0.U

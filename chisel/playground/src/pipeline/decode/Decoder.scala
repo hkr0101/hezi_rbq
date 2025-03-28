@@ -27,6 +27,7 @@ class Decoder extends Module with HasInstrType {
     default.imm         := 0.U
     default.src1_ren    := false.B
     default.src2_ren    := false.B
+    default.fusel       := FuType.alu
     default
   }
 //---------------------------------------------------------------------------------
@@ -36,6 +37,7 @@ class Decoder extends Module with HasInstrType {
       io.out.info.valid     := true.B
       io.out.info.instrType := ctrl(0).asUInt
       io.out.info.op        := ctrl(2)
+      io.out.info.fusel     := ctrl(1)
       io.out.info.reg_wen   := (ctrl(0) =/= InstrS) && (ctrl(0) =/= InstrB)
       io.out.info.reg_waddr := io.in.inst(11,7)
       io.out.info.src1_raddr := Mux(ctrl(0) === InstrU, 0.U, io.in.inst(19,15))

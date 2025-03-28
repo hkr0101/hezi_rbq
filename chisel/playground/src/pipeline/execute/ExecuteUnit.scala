@@ -13,7 +13,6 @@ class ExecuteUnit extends Module {
     val memoryStage  = Output(new ExecuteUnitMemoryUnit())
     val dataSram     = new DataSram()
   })
-
   val fu = Module(new Fu()).io
   fu.data.pc       := io.executeStage.data.pc
   fu.data.info     := io.executeStage.data.info
