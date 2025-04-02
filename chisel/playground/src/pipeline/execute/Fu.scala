@@ -18,11 +18,11 @@ class Fu extends Module {
     val dataSram = new DataSram()
   })
   io.dataSram.en    := false.B
-  io.dataSram.addr  := DontCare
-  io.dataSram.wdata := DontCare
+  io.dataSram.addr  := 0.U
+  io.dataSram.wdata := 0.U
   io.dataSram.wen   := 0.U
-
   val result = WireInit(0.U(XLEN.W))
+  result := 0.U
   when(io.data.info.fusel === FuType.alu){
     val alu = Module(new Alu()).io
     alu.info     := io.data.info
@@ -35,6 +35,17 @@ class Fu extends Module {
     mdu.src_info := io.data.src_info
     mdu.pc       := io.data.pc
     result       := mdu.result
+  } .elsewhen(io.data.info.fusel === FuType.lsu){
+    val lsu = Module(new Lsu()).io
+    lsu.info     := io.data.info
+    lsu.src_info := io.data.src_info
+    lsu.pc       := io.data.pc
+    lsu.dataSram <> io.dataSram
+    // io.dataSram.en    := lsu.en
+    // io.dataSram.addr  := lsu.addr
+    // io.dataSram.wdata := lsu.wdata
+    // io.dataSram.wen   := lsu.wen
+    result       := lsu.result
   }
  
   io.data.rd_info.wdata := result

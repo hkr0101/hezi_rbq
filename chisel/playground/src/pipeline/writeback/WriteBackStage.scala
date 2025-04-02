@@ -25,14 +25,8 @@ class WriteBackStage extends Module {
   
   // TODO: 完成WriteBackStage模块的逻辑
   //io.writeBackUnit.data := io.memoryUnit.data
-  switch(io.memoryUnit.data.info.op){
-    is(ALUOpType.add , ALUOpType.sub , ALUOpType.sll , ALUOpType.slt ,
-    ALUOpType.sltu , ALUOpType.xor , ALUOpType.srl , ALUOpType.sra ,
-    ALUOpType.or , ALUOpType.and , ALUOpType.addw , ALUOpType.subw ,
-    ALUOpType.sllw , ALUOpType.srlw , ALUOpType.sraw, ALUOpType.auipc, ALUOpType.lui, 
-    MDUOpType.mul, MDUOpType.mulh, MDUOpType.mulhsu, MDUOpType.mulhu, MDUOpType.div,
-    MDUOpType.divu, MDUOpType.rem, MDUOpType.remu, MDUOpType.mulw, MDUOpType.divw,
-    MDUOpType.divuw, MDUOpType.remw, MDUOpType.remuw){
+  switch(io.memoryUnit.data.info.fusel){
+    is(FuType.alu, FuType.mdu, FuType.lsu){
       data := io.memoryUnit.data
     }
   }

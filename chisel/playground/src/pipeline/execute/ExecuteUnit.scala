@@ -11,6 +11,7 @@ class ExecuteUnit extends Module {
   val io = IO(new Bundle {
     val executeStage = Input(new DecodeUnitExecuteUnit())
     val memoryStage  = Output(new ExecuteUnitMemoryUnit())
+    val dataS_rdata  = Output(UInt(DATA_SRAM_DATA_WID.W))
     val dataSram     = new DataSram()
   })
   val fu = Module(new Fu()).io
@@ -19,6 +20,7 @@ class ExecuteUnit extends Module {
   fu.data.src_info := io.executeStage.data.src_info
 
   io.dataSram <> fu.dataSram
+  io.dataS_rdata   := fu.dataSram.rdata
 
   // TODO: 完成ExecuteUnit模块的逻辑
   io.memoryStage.data      := fu.data

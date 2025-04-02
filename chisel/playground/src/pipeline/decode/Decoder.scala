@@ -38,6 +38,7 @@ class Decoder extends Module with HasInstrType {
       io.out.info.instrType := ctrl(0).asUInt
       io.out.info.op        := ctrl(2)
       io.out.info.fusel     := ctrl(1)
+      //io.out.info.reg_wen   := "b1".U
       io.out.info.reg_wen   := (ctrl(0) =/= InstrS) && (ctrl(0) =/= InstrB)
       io.out.info.reg_waddr := io.in.inst(11,7)
       io.out.info.src1_raddr := Mux(ctrl(0) === InstrU, 0.U, io.in.inst(19,15))
@@ -53,11 +54,14 @@ class Decoder extends Module with HasInstrType {
     switch(instrType) {
       is(InstrI) { imm := Cat(Fill(XLEN-12, inst(31)), inst(31,20)) }
       is(InstrU) { imm := Cat(Fill(XLEN-20, inst(31)), inst(31,12)) }
-      // is(InstrS) { imm := Cat(Fill(XLEN-12, inst(31)), inst(31,25), inst(11,7)) }
+      is(InstrS) { imm := Cat(Fill(XLEN-12, inst(31)), inst(31,25), inst(11,7)) }
       // is(InstrB) { imm := Cat(Fill(XLEN-13, inst(31)), inst(7), inst(30,25), inst(11,8), 0.U(1.W)) }
     }
     imm
   }
+  // when(io.out.info.instrType === InstrS){
+  //   printf("io.out.info.reg_wen:%x\n",io.out.info.reg_wen)
+  // }
 
 
 }

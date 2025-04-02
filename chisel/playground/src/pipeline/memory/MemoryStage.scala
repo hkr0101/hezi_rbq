@@ -25,20 +25,20 @@ class MemoryStage extends Module {
 
   val data = RegInit(0.U.asTypeOf(new ExeMemData()))
 
+  
   // TODO: 完成MemoryStage模块的逻辑
   //io.memoryUnit.data := io.executeUnit.data
   switch(io.executeUnit.data.info.fusel){
-    is(ALUOpType.add , ALUOpType.sub , ALUOpType.sll , ALUOpType.slt ,
-    ALUOpType.sltu , ALUOpType.xor , ALUOpType.srl , ALUOpType.sra ,
-    ALUOpType.or , ALUOpType.and , ALUOpType.addw , ALUOpType.subw ,
-    ALUOpType.sllw , ALUOpType.srlw , ALUOpType.sraw, ALUOpType.auipc, ALUOpType.lui, 
-    MDUOpType.mul, MDUOpType.mulh, MDUOpType.mulhsu, MDUOpType.mulhu, MDUOpType.div,
-    MDUOpType.divu, MDUOpType.rem, MDUOpType.remu, MDUOpType.mulw, MDUOpType.divw,
-    MDUOpType.divuw, MDUOpType.remw, MDUOpType.remuw){
+    is(FuType.alu, FuType.mdu, FuType.lsu){
       data := io.executeUnit.data
-      
       //printf("testest\n")
     }
   }
+  //printf("MEMS_io.executeUnit_wdata:%x\n\n",io.executeUnit.data.rd_info.wdata)
+  // when(io.executeUnit.data.pc === "h8000034c".U){
+  //   data.rd_info.wdata := "h1111_0000_0000_0000".U
+  // }
+
   io.memoryUnit.data := data
+  
 }
