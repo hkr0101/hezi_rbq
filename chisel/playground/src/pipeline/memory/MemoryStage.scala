@@ -29,7 +29,7 @@ class MemoryStage extends Module {
   // TODO: 完成MemoryStage模块的逻辑
   //io.memoryUnit.data := io.executeUnit.data
   switch(io.executeUnit.data.info.fusel){
-    is(FuType.alu, FuType.mdu, FuType.lsu){
+    is(FuType.alu, FuType.mdu, FuType.lsu, FuType.bru){
       data := io.executeUnit.data
       //printf("testest\n")
     }

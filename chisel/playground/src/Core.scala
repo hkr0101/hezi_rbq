@@ -38,6 +38,7 @@ class Core extends Module {
   executeStage.executeUnit <> executeUnit.executeStage
   executeUnit.memoryStage <> memoryStage.executeUnit
   executeUnit.dataS_rdata <> memoryUnit.dataS_rdata
+  executeUnit.bra_info    <> fetchUnit.bra_info
 
   memoryStage.memoryUnit <> memoryUnit.memoryStage
   memoryUnit.writeBackStage <> writeBackStage.memoryUnit
@@ -47,4 +48,20 @@ class Core extends Module {
   executeUnit.dataSram <> io.dataSram
 
   writeBackUnit.debug <> io.debug
+  // printf("fetch_cp:%x\n",fetchUnit.decodeStage.data.pc)
+  // printf("decode_pc:%x\n",decodeUnit.decodeStage.data.pc)
+  // printf("execute_cp:%x\n",executeUnit.executeStage.data.pc)
+  // printf("memory_cp:%x\n",memoryUnit.memoryStage.data.pc)
+  // printf("writeBack_cp:%x\n",writeBackUnit.writeBackStage.data.pc)
+  // printf("decode_unit_src1_data:%x\n",decodeUnit.executeStage.data.src_info.src1_data)
+  // printf("decode_unit_src2_data:%x\n",decodeUnit.executeStage.data.src_info.src2_data)
+  // printf("decode_unit_src1_addr:%x\n",decodeUnit.regfile.src1.raddr)
+  // printf("decode_unit_src2_addr:%x\n",decodeUnit.regfile.src2.raddr)
+  // printf("executeUnit_result:%x\n",executeUnit.memoryStage.data.rd_info.wdata)
+  // printf("decoder_op:%x\n",decodeUnit.executeStage.data.info.op)
+  // printf("memoryStage_wdata:%x\n",memoryStage.memoryUnit.data.rd_info.wdata)
+  // printf("executeUnit_wdata:%x\n",memoryStage.executeUnit.data.rd_info.wdata)
+  // printf("\n")
+  // printf("\n")
+
 }

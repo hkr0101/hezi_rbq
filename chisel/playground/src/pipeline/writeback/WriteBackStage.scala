@@ -26,7 +26,7 @@ class WriteBackStage extends Module {
   // TODO: 完成WriteBackStage模块的逻辑
   //io.writeBackUnit.data := io.memoryUnit.data
   switch(io.memoryUnit.data.info.fusel){
-    is(FuType.alu, FuType.mdu, FuType.lsu){
+    is(FuType.alu, FuType.mdu, FuType.lsu, FuType.bru){
       data := io.memoryUnit.data
     }
   }

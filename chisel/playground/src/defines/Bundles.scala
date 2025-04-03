@@ -35,6 +35,11 @@ class Info extends Bundle {
   val fusel      = FuType()
 }
 
+class BranchInfo extends Bundle {
+  val branch     = Bool()
+  val target     = UInt(XLEN.W)
+}
+
 class SrcReadSignal extends Bundle {
   val ren   = Bool()
   val raddr = UInt(REG_ADDR_WID.W)
